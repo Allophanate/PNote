@@ -1,15 +1,15 @@
 import json
 import cmd
 
-KBASE_FILE = ""
+KBASE_FILE = "pkm.json"
 
 class KnowledgeBase():
     def __init__(self):
-        tagdict = {}
+        self.tagdict = {}
         
     def add_dot(self, kdot):
         if kdot.tag in self.tagdict:
-            self.tagdict[kdot.tag].append({"priority": kdot.prio, "content": kdot.content}
+            self.tagdict[kdot.tag].append({"priority": kdot.prio, "content": kdot.content})
         else:
             self.tagdict[kdot.tag] = [{"priority": kdot.prio, "content": kdot.content}]
             
@@ -45,14 +45,14 @@ class PyNotePrompt(cmd.Cmd):
                 kdot = KDot(tag=tag, content=content)
             kbase.add_dot(kdot)
             
-    def do_load(self):
+    def do_load(self, arg):
         kbase.load_base()
         
-    def do_commit(self):
+    def do_commit(self, arg):
         kbase.save_base()
         
     def do_xplore(self, arg):
-        XplorePrompt().cmdloop
+        XplorePrompt().cmdloop()
         
     def do_EOF(self, arg):
         return True
@@ -60,25 +60,24 @@ class PyNotePrompt(cmd.Cmd):
     
 class XplorePrompt(cmd.Cmd):
         
-    def do_tag(self, arg):
+    def do_tag(self, tag):
         if tag == "":
             print("List of tags:")
             tag_list = kbase.tagdict.keys()
-            for i, tag  in enumerate(tag_list)
+            for i, tag  in enumerate(tag_list):
                 print("%d: %s" % (i, tag))
             
             while True:
-                print("Show which tag? Enter index-no or c to cancel")
+                print("Show which tag? Enter tag or c to cancel")
                 answer = input()
-                if answer.isalpha():
-                    if answer == "c"
-                        break
-                    else:
-                        print("Invalid input!")
-                elif answer.isdigit():
-                    idx = int(answer)
-                    for i, kdot in enumerate(kbase.tagdict[tag_list[idx]]):
+                if answer == "c":
+                    break
+                elif answer in kbase.tagdict.keys():
+                    for i, kdot in enumerate(kbase.tagdict[answer]):
                         print("%d: %s..." % (i, kdot["content"][:60]))
+                else:
+                    print("Invalid input!")
+                
                     
         
     def do_EOF(self, line):
