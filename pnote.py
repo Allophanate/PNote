@@ -1,5 +1,6 @@
 import json
 import cmd
+import re
 
 KBASE_FILE = "pkm.json"
 
@@ -13,7 +14,7 @@ class KnowledgeBase():
         else:
             self.tagdict[kdot.tag] = [{"priority": kdot.prio, "content": kdot.content}]
             
-    def del_dot_in_tag(self, idx):
+    def del_dot_in_tag(self, tag, idx):
         del self.tagdict[tag][idx]
             
     def save_base(self):
@@ -23,6 +24,15 @@ class KnowledgeBase():
     def load_base(self):
         with open(KBASE_FILE) as infile:
             self.tagdict = json.load(infile)
+
+    def search_base(self, search_term):
+        search_results = []
+        for tag in self.tagdict.keys():
+            for dot in self.tagdict[tag]:
+                match = re.search((search_term), dot["content"])
+                if match:
+                    search_results.append(dot)
+        return search_results
         
         
 class KDot():
