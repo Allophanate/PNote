@@ -61,14 +61,9 @@ class PyNotePrompt(cmd.Cmd):
     def do_commit(self, arg):
         kbase.save_base()
         
-    def do_xplore(self, arg):
-        XplorePrompt().cmdloop()
         
     def do_EOF(self, arg):
         return True
-        
-    
-class XplorePrompt(cmd.Cmd):
         
     def do_tag(self, tag):
         if tag == "":
@@ -84,14 +79,21 @@ class XplorePrompt(cmd.Cmd):
                     break
                 elif answer in kbase.tagdict.keys():
                     for i, kdot in enumerate(kbase.tagdict[answer]):
-                        print("%d: %s..." % (i, kdot["content"][:60]))
+                        print("%d: %s \n" % (i, kdot["content"]))
                 else:
                     print("Invalid input!")
+            
+    def do_search(self, search_term):
+        results = kbase.search_base(search_term)
+        if len(results) == 0:
+            print("No matches found")
+        else:
+            for i, kdot in enumerate(results):
+                print("%d: %s \n" % (i, kdot))
                 
                     
         
-    def do_EOF(self, line):
-        return True
+    
 if __name__ == '__main__':   
     kbase = KnowledgeBase()
     PyNotePrompt().cmdloop()
