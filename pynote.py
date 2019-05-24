@@ -2,27 +2,30 @@ import json
 import cmd
 import re
 
-KBASE_FILE = "pkm.json"
 
 class KnowledgeBase():
-    def __init__(self):
+    def __init__(self, kbase_file):
+        self.kbase_file = kbase_file
         self.tagdict = {}
         
     def add_dot(self, kdot):
         if kdot.tag in self.tagdict:
             self.tagdict[kdot.tag].append({"priority": kdot.prio, "content": kdot.content})
+        elif re.match(" *", kdot.tag):
+            raise ValueError("Tag is not allowed to contain whitespace!")
         else:
             self.tagdict[kdot.tag] = [{"priority": kdot.prio, "content": kdot.content}]
+        
             
     def del_dot_in_tag(self, tag, idx):
         del self.tagdict[tag][idx]
             
     def save_base(self):
-        with open(KBASE_FILE, "w") as outfile:
+        with open(self.kbase_file, "w") as outfile:
             json.dump(self.tagdict, outfile, indent=4)
     
     def load_base(self):
-        with open(KBASE_FILE) as infile:
+        with open(self.kbase_file) as infile:
             self.tagdict = json.load(infile)
 
     def search_base(self, search_term):

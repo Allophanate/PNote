@@ -12,7 +12,11 @@ class PyNotePrompt(cmd.Cmd):
                 kdot = pynote.KDot(content=content)
             else:
                 kdot = pynote.KDot(tag=tag, content=content)
-            kbase.add_dot(kdot)
+            try:
+                kbase.add_dot(kdot)
+            except ValueError as e:
+                print("Invalid tag!")
+                print(e)
             
     def do_load(self, arg):
         kbase.load_base()
@@ -54,5 +58,5 @@ class PyNotePrompt(cmd.Cmd):
         
     
 if __name__ == '__main__':   
-    kbase = pynote.KnowledgeBase()
+    kbase = pynote.KnowledgeBase("pkb.json")
     PyNotePrompt().cmdloop()
